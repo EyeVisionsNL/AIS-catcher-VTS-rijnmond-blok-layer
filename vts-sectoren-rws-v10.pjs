@@ -1,4 +1,4 @@
-// {"author":"Coen","version":5,"description":"Rijnmond VTS sectoren - RWS polygonen v10"}
+// {"author":"EyeVisionsNL","version":5,"description":"Rijnmond VTS sectoren - RWS polygonen v10"}
 if (typeof AISCatcher !== 'undefined' &&
     AISCatcher.PLUGIN_API_VERSION >= 5 &&
     typeof ol !== 'undefined') {
