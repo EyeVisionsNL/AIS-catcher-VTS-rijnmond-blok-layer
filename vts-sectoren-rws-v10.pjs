@@ -1,0 +1,81 @@
+// {"author":"Coen","version":5,"description":"Rijnmond VTS sectoren - RWS polygonen v10"}
+if (typeof AISCatcher !== 'undefined' &&
+    AISCatcher.PLUGIN_API_VERSION >= 5 &&
+    typeof ol !== 'undefined') {
+
+  /*
+   * v10
+   * ---
+   * Alleen OpenLayers onderdelen gebruiken die aantoonbaar in AIS-Catcher
+   * beschikbaar zijn: ol.layer.Tile + ol.source.XYZ.
+   *
+   * Geen ol.tilegrid, geen ImageArcGISRest en geen handgetekende lijnen.
+   *
+   * De kaartafbeeldingen worden rechtstreeks uit officiële RWS
+   * vts-deelsector_v polygonlaag 67 gerenderd.
+   */
+
+  var EXPORT_URL =
+    'https://geo.rijkswaterstaat.nl/arcgis/rest/services/GDR/fis_vnds/MapServer/export';
+
+  var DYNAMIC_LAYERS = "[{\"id\":67,\"source\":{\"type\":\"mapLayer\",\"mapLayerId\":67},\"definitionExpression\":\"vhfchannel IN ('3','66','65','80','61','62','63','60','81')\",\"drawingInfo\":{\"renderer\":{\"type\":\"uniqueValue\",\"field1\":\"vhfchannel\",\"defaultSymbol\":null,\"uniqueValueInfos\":[{\"value\":\"3\",\"label\":\"VHF 3 MAAS ENTRANCE\",\"symbol\":{\"type\":\"esriSFS\",\"style\":\"esriSFSSolid\",\"color\":[255,138,0,82],\"outline\":{\"type\":\"esriSLS\",\"style\":\"esriSLSSolid\",\"color\":[255,138,0,235],\"width\":1.4}}},{\"value\":\"66\",\"label\":\"VHF 66 EUROPOORT\",\"symbol\":{\"type\":\"esriSFS\",\"style\":\"esriSFSSolid\",\"color\":[88,184,177,82],\"outline\":{\"type\":\"esriSLS\",\"style\":\"esriSLSSolid\",\"color\":[88,184,177,235],\"width\":1.4}}},{\"value\":\"65\",\"label\":\"VHF 65 ROZENBURG\",\"symbol\":{\"type\":\"esriSFS\",\"style\":\"esriSFSSolid\",\"color\":[20,89,166,82],\"outline\":{\"type\":\"esriSLS\",\"style\":\"esriSLSSolid\",\"color\":[20,89,166,235],\"width\":1.4}}},{\"value\":\"80\",\"label\":\"VHF 80 MAASSLUIS\",\"symbol\":{\"type\":\"esriSFS\",\"style\":\"esriSFSSolid\",\"color\":[85,169,29,82],\"outline\":{\"type\":\"esriSLS\",\"style\":\"esriSLSSolid\",\"color\":[85,169,29,235],\"width\":1.4}}},{\"value\":\"61\",\"label\":\"VHF 61 BOTLEK\",\"symbol\":{\"type\":\"esriSFS\",\"style\":\"esriSFSSolid\",\"color\":[229,0,126,82],\"outline\":{\"type\":\"esriSLS\",\"style\":\"esriSLSSolid\",\"color\":[229,0,126,235],\"width\":1.4}}},{\"value\":\"62\",\"label\":\"VHF 62 OUDE MAAS\",\"symbol\":{\"type\":\"esriSFS\",\"style\":\"esriSFSSolid\",\"color\":[143,114,189,82],\"outline\":{\"type\":\"esriSLS\",\"style\":\"esriSLSSolid\",\"color\":[143,114,189,235],\"width\":1.4}}},{\"value\":\"63\",\"label\":\"VHF 63 EEMHAVEN\",\"symbol\":{\"type\":\"esriSFS\",\"style\":\"esriSFSSolid\",\"color\":[183,155,114,82],\"outline\":{\"type\":\"esriSLS\",\"style\":\"esriSLSSolid\",\"color\":[183,155,114,235],\"width\":1.4}}},{\"value\":\"60\",\"label\":\"VHF 60 WAALHAVEN\",\"symbol\":{\"type\":\"esriSFS\",\"style\":\"esriSFSSolid\",\"color\":[141,0,101,82],\"outline\":{\"type\":\"esriSLS\",\"style\":\"esriSLSSolid\",\"color\":[141,0,101,235],\"width\":1.4}}},{\"value\":\"81\",\"label\":\"VHF 81 MAASBRUGGEN\",\"symbol\":{\"type\":\"esriSFS\",\"style\":\"esriSFSSolid\",\"color\":[0,169,223,82],\"outline\":{\"type\":\"esriSLS\",\"style\":\"esriSLSSolid\",\"color\":[0,169,223,235],\"width\":1.4}}}]}}}]";
+
+  // Halve omtrek van Web Mercator in meters.
+  var ORIGIN = 20037508.342789244;
+
+  function tileExtent3857(z, x, y) {
+    var tiles = Math.pow(2, z);
+    var span = (ORIGIN * 2) / tiles;
+
+    var minX = -ORIGIN + (x * span);
+    var maxX = minX + span;
+    var maxY =  ORIGIN - (y * span);
+    var minY = maxY - span;
+
+    return [minX, minY, maxX, maxY];
+  }
+
+  var source = new ol.source.XYZ({
+    maxZoom: 20,
+    wrapX: false,
+
+    tileUrlFunction: function(tileCoord) {
+      if (!tileCoord) return undefined;
+
+      var z = tileCoord[0];
+      var x = tileCoord[1];
+      var y = tileCoord[2];
+
+      // Buiten normale XYZ-tegelindex niets aanvragen.
+      var n = Math.pow(2, z);
+      if (x < 0 || x >= n || y < 0 || y >= n) return undefined;
+
+      var bbox = tileExtent3857(z, x, y);
+
+      return EXPORT_URL +
+        '?f=image' +
+        '&bbox=' + bbox.join(',') +
+        '&bboxSR=3857' +
+        '&imageSR=3857' +
+        '&size=256,256' +
+        '&dpi=96' +
+        '&format=png32' +
+        '&transparent=true' +
+        '&dynamicLayers=' + encodeURIComponent(DYNAMIC_LAYERS);
+    },
+
+    attributions: 'VTS-sectoren © Rijkswaterstaat'
+  });
+
+  var layer = new ol.layer.Tile({
+    source: source,
+    opacity: 1,
+    zIndex: 1000
+  });
+
+  AISCatcher.addOverlayLayer('Rijnmond VTS sectoren', layer);
+
+  console.info(
+    '[AIS VTS] v10 geladen: RWS polygonlaag 67 via XYZ/ArcGIS Export.'
+  );
+}
