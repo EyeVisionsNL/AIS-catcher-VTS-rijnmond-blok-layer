@@ -1,4 +1,4 @@
-// {"author":"Coen","version":5,"description":"Rijnmond VTS sectoren v11 - officiële RWS polygonen lokaal ingebakken"}
+// {"author":"EyeVisionsNL","version":5,"description":"Rijnmond VTS sectoren v11 - officiële RWS polygonen lokaal ingebakken"}
 if (typeof AISCatcher !== 'undefined' &&
     AISCatcher.PLUGIN_API_VERSION >= 5 &&
     typeof ol !== 'undefined') {
