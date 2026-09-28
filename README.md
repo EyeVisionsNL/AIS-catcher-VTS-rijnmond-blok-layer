@@ -10,7 +10,7 @@ De huidige stabiele versie is **v15** (`vts-sectoren-rws-v15.pjs`).
 
 - De legenda begint ingeklapt en onthoudt open/dicht per browser en websiteadres, ook na verversen of opnieuw laden bij een ATIS-oproep.
 - De legenda behoudt de bestaande positie rechtsboven, naast de AIS-bediening.
-- Het hele legendapaneel heeft waterkleur `#667f86`, overgenomen uit de aangeleverde kaartscreenshot.
+- Het hele legendapaneel heeft waterkleur `#adccff`, ingesteld op de gekozen lichtblauwe tint.
 - De compacte kleurvakjes gebruiken weer de oorspronkelijke, volle sectorkleuren van v14.
 - De paneelkleur is vast; deze past zich niet automatisch aan andere achtergrondkaarten of thema’s aan.
 - Zonder browseropslag blijft de legenda bruikbaar, maar kan de keuze niet over een volledige paginaverversing worden onthouden.

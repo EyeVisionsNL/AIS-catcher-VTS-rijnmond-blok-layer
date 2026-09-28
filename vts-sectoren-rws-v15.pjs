@@ -119,7 +119,7 @@ if (typeof AISCatcher !== 'undefined' &&
       css.textContent =
         '#rijnmond-vhf-legend{position:absolute;right:60px;top:12px;z-index:10;' +
         'box-sizing:border-box;width:160px;max-width:calc(100% - 76px);' +
-        'color:#101820;background:#667f86;border:1px solid #667080;' +
+        'color:#101820;background:#adccff;border:1px solid #667080;' +
         'border-radius:6px;box-shadow:0 2px 8px #0005;font:11px/1.2 sans-serif;' +
         'pointer-events:auto;text-align:left;}' +
         '#rijnmond-vhf-legend[hidden]{display:none!important;}' +
