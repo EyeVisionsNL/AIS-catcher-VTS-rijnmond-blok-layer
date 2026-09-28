@@ -4,7 +4,27 @@ Overlay voor de AIS-Catcher kaart met de officiële Rijnmond VTS-sectoren en de 
 
 ![Rijnmond VTS sectoren - v14, layer 100% zichtbaar](Screenshot-v14-layer-100.png)
 
-## Huidige versie
+## Develop: v15
+
+Op `develop` staat **v15** klaar om te testen:
+
+- De legenda begint ingeklapt en onthoudt open/dicht per browser en websiteadres, ook na verversen of opnieuw laden bij een ATIS-oproep.
+- De legenda behoudt de bestaande positie rechtsboven, naast de AIS-bediening.
+- Kleurvoorbeelden gebruiken dezelfde vultransparantie en randkleur als de sectoren en volgen de laagdekking.
+- De waterblauwe voorbeeldachtergrond benadert OpenStreetMap-water; andere kaarten, nachtmodus en overlappende sectoren kunnen andere tinten geven.
+- Zonder browseropslag blijft de legenda bruikbaar, maar kan de keuze niet over een volledige paginaverversing worden onthouden.
+
+Bijwerken naar de testversie (vervang het bestaande pluginbestand; laat niet meerdere versies actief):
+
+```bash
+sudo curl -fsSL https://raw.githubusercontent.com/EyeVisionsNL/AIS-catcher-VTS-rijnmond-blok-layer/develop/vts-sectoren-rws-v15.pjs -o /etc/AIS-catcher/plugins/vts-sectoren.pjs
+sudo chmod 644 /etc/AIS-catcher/plugins/vts-sectoren.pjs
+sudo systemctl restart ais-catcher.service
+```
+
+Ververs de kaart daarna eenmalig met Ctrl+F5. Controleer dicht/open na verversen en een ATIS-oproep, en wijzig de laagdekking om de kleurvoorbeelden te controleren.
+
+## Huidige stabiele versie
 
 De huidige versie is **v14** (`vts-sectoren-rws-v14.pjs`).
 
@@ -99,3 +119,4 @@ De sectorgeometrie is afkomstig uit de officiële Rijkswaterstaat dataset:
 De geometrie staat lokaal in de plugin opgeslagen.
 
 Repository: `EyeVisionsNL/AIS-catcher-VTS-rijnmond-blok-layer`.
+
