@@ -4,9 +4,9 @@ Overlay voor de AIS-Catcher kaart met de officiële Rijnmond VTS-sectoren en de 
 
 ![Rijnmond VTS sectoren - v14, layer 100% zichtbaar](Screenshot-v14-layer-100.png)
 
-## Develop: v15
+## Huidige versie: v15
 
-Op `develop` staat **v15** klaar om te testen:
+De huidige stabiele versie is **v15** (`vts-sectoren-rws-v15.pjs`).
 
 - De legenda begint ingeklapt en onthoudt open/dicht per browser en websiteadres, ook na verversen of opnieuw laden bij een ATIS-oproep.
 - De legenda behoudt de bestaande positie rechtsboven, naast de AIS-bediening.
@@ -15,23 +15,11 @@ Op `develop` staat **v15** klaar om te testen:
 - De paneelkleur is vast; deze past zich niet automatisch aan andere achtergrondkaarten of thema’s aan.
 - Zonder browseropslag blijft de legenda bruikbaar, maar kan de keuze niet over een volledige paginaverversing worden onthouden.
 
-Bijwerken naar de testversie (vervang het bestaande pluginbestand; laat niet meerdere versies actief):
+## Sectoren
 
-```bash
-sudo curl -fsSL https://raw.githubusercontent.com/EyeVisionsNL/AIS-catcher-VTS-rijnmond-blok-layer/develop/vts-sectoren-rws-v15.pjs -o /etc/AIS-catcher/plugins/vts-sectoren.pjs
-sudo chmod 644 /etc/AIS-catcher/plugins/vts-sectoren.pjs
-sudo systemctl restart ais-catcher.service
-```
+De overlay gebruikt lokaal opgeslagen officiële Rijkswaterstaat `vts-deelsector_v`-polygonen. Daardoor is voor het tekenen van de sectoren geen live ArcGIS-verzoek nodig.
 
-Ververs de kaart daarna eenmalig met Ctrl+F5. Controleer dicht/open na verversen en een ATIS-oproep, en controleer de waterkleur van het hele paneel.
-
-## Huidige stabiele versie
-
-De huidige versie is **v14** (`vts-sectoren-rws-v14.pjs`).
-
-v14 gebruikt lokaal opgeslagen officiële Rijkswaterstaat `vts-deelsector_v`-polygonen. Daardoor is voor het tekenen van de sectoren geen live ArcGIS-verzoek nodig.
-
-Belangrijkste wijzigingen in v14:
+Overgenomen uit v14:
 
 - **Sector Oude Maas · VHF62** heeft een beter zichtbare paarse kleur (`#af85f2`).
 - **Sector Hartelkanaal · VHF10** is toegevoegd op basis van de officiële RWS-polygon.
@@ -45,7 +33,7 @@ AIS-Catcher laadt alle `.pjs`-bestanden uit de ingestelde pluginmap. Gebruik daa
 
 ```bash
 sudo mkdir -p /etc/AIS-catcher/plugins
-sudo curl -fsSL https://raw.githubusercontent.com/EyeVisionsNL/AIS-catcher-VTS-rijnmond-blok-layer/main/vts-sectoren-rws-v14.pjs -o /etc/AIS-catcher/plugins/vts-sectoren.pjs
+sudo curl -fsSL https://raw.githubusercontent.com/EyeVisionsNL/AIS-catcher-VTS-rijnmond-blok-layer/main/vts-sectoren-rws-v15.pjs -o /etc/AIS-catcher/plugins/vts-sectoren.pjs
 sudo chmod 644 /etc/AIS-catcher/plugins/vts-sectoren.pjs
 sudo systemctl restart ais-catcher.service
 ```
@@ -64,7 +52,7 @@ Controleer eerst of het juiste bestand is geïnstalleerd:
 head -1 /etc/AIS-catcher/plugins/vts-sectoren.pjs
 ```
 
-De eerste regel moet `v14` noemen.
+De eerste regel moet `v15` noemen.
 
 Controleer daarna de AIS-Catcher logging:
 
@@ -80,22 +68,22 @@ find /etc/AIS-catcher/plugins -maxdepth 1 -type f -name '*.pjs' -print
 
 ## Bijwerken
 
-Een bestaande installatie bijwerken naar v14:
+Een bestaande installatie bijwerken naar v15:
 
 ```bash
-sudo curl -fsSL https://raw.githubusercontent.com/EyeVisionsNL/AIS-catcher-VTS-rijnmond-blok-layer/main/vts-sectoren-rws-v14.pjs -o /etc/AIS-catcher/plugins/vts-sectoren.pjs
+sudo curl -fsSL https://raw.githubusercontent.com/EyeVisionsNL/AIS-catcher-VTS-rijnmond-blok-layer/main/vts-sectoren-rws-v15.pjs -o /etc/AIS-catcher/plugins/vts-sectoren.pjs
 sudo chmod 644 /etc/AIS-catcher/plugins/vts-sectoren.pjs
 sudo systemctl restart ais-catcher.service
 ```
 
 Ververs daarna de AIS-Catcher kaart in de browser. Gebruik eventueel een harde refresh zodat de aangepaste plugin direct zichtbaar is.
 
-## Terug naar v12
+## Terug naar v14
 
 Als tijdelijke fallback kan de vorige gepubliceerde versie worden teruggezet:
 
 ```bash
-sudo curl -fsSL https://raw.githubusercontent.com/EyeVisionsNL/AIS-catcher-VTS-rijnmond-blok-layer/main/vts-sectoren-rws-v12.pjs -o /etc/AIS-catcher/plugins/vts-sectoren.pjs
+sudo curl -fsSL https://raw.githubusercontent.com/EyeVisionsNL/AIS-catcher-VTS-rijnmond-blok-layer/main/vts-sectoren-rws-v14.pjs -o /etc/AIS-catcher/plugins/vts-sectoren.pjs
 sudo chmod 644 /etc/AIS-catcher/plugins/vts-sectoren.pjs
 sudo systemctl restart ais-catcher.service
 ```
