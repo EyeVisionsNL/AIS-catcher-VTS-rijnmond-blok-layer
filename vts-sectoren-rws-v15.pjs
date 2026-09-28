@@ -1,4 +1,4 @@
-// {"author":"EyeVisionsNL","version":5,"description":"Rijnmond VTS sectoren v15 - blijvende legenda en transparante kleurvoorbeelden"}
+// {"author":"EyeVisionsNL","version":5,"description":"Rijnmond VTS sectoren v15 - blijvende legenda met waterkleur"}
 if (typeof AISCatcher !== 'undefined' &&
     AISCatcher.PLUGIN_API_VERSION >= 5 &&
     typeof ol !== 'undefined') {
@@ -118,8 +118,8 @@ if (typeof AISCatcher !== 'undefined' &&
       css.id = 'rijnmond-vhf-legend-style';
       css.textContent =
         '#rijnmond-vhf-legend{position:absolute;right:60px;top:12px;z-index:10;' +
-        'box-sizing:border-box;width:190px;max-width:calc(100% - 76px);' +
-        'color:#f4f6fa;background:rgba(19,27,38,.94);border:1px solid #667080;' +
+        'box-sizing:border-box;width:160px;max-width:calc(100% - 76px);' +
+        'color:#101820;background:#667f86;border:1px solid #667080;' +
         'border-radius:6px;box-shadow:0 2px 8px #0005;font:11px/1.2 sans-serif;' +
         'pointer-events:auto;text-align:left;}' +
         '#rijnmond-vhf-legend[hidden]{display:none!important;}' +
@@ -128,9 +128,8 @@ if (typeof AISCatcher !== 'undefined' &&
         '#rijnmond-vhf-legend .rijnmond-vhf-rows{padding:0 7px 6px;max-height:220px;' +
         'max-height:min(220px,45vh);overflow:auto;overscroll-behavior:contain;}' +
         '#rijnmond-vhf-legend .rijnmond-vhf-row{display:flex;align-items:center;gap:4px;padding:1px 0;white-space:nowrap;}' +
-        '#rijnmond-vhf-legend .rijnmond-vhf-swatch{width:24px;height:14px;flex:0 0 24px;position:relative;overflow:hidden;' +
-        'border-radius:2px;border:1px solid #ffffff60;background:#aad3df;}' +
-        '#rijnmond-vhf-legend .rijnmond-vhf-sample{position:absolute;inset:0;box-sizing:border-box;}' +
+        '#rijnmond-vhf-legend .rijnmond-vhf-swatch{width:9px;height:9px;flex:0 0 9px;' +
+        'border-radius:2px;border:1px solid #ffffff60;}' +
         '#rijnmond-vhf-legend .rijnmond-vhf-channel{margin-left:2px;font-variant-numeric:tabular-nums;}' ;
       document.head.appendChild(css);
     }
@@ -163,20 +162,12 @@ if (typeof AISCatcher !== 'undefined' &&
       var channelDiff = parseInt(a.channel, 10) - parseInt(b.channel, 10);
       return channelDiff || a.name.localeCompare(b.name);
     });
-    var samples = [];
     entries.forEach(function(entry) {
       var row = document.createElement('div');
       row.className = 'rijnmond-vhf-row';
       var swatch = document.createElement('span');
       swatch.className = 'rijnmond-vhf-swatch';
-      var sample = document.createElement('span');
-      sample.className = 'rijnmond-vhf-sample';
-      var color = COLORS[entry.channel] || '#777777';
-      sample.style.backgroundColor = hexToRgba(color, fillAlpha(entry.channel));
-      sample.style.border = '2px solid ' + hexToRgba(color, 0.95);
-      swatch.appendChild(sample);
-      samples.push(sample);
-      row.title = 'Sectorkleur op waterblauw; de tint kan per achtergrondkaart verschillen.';
+      swatch.style.backgroundColor = COLORS[entry.channel] || '#777777';
       swatch.setAttribute('aria-hidden', 'true');
       var label = document.createElement('span');
       label.textContent = entry.name;
@@ -199,7 +190,6 @@ if (typeof AISCatcher !== 'undefined' &&
     function syncLegendVisibility() {
       var opacity = layer.getOpacity();
       legend.hidden = !layer.getVisible() || opacity === 0;
-      samples.forEach(function(sample) { sample.style.opacity = String(opacity); });
     }
     layer.on('change:visible', syncLegendVisibility);
     layer.on('change:opacity', syncLegendVisibility);
