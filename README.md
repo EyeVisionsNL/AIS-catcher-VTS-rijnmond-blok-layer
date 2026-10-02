@@ -1,111 +1,79 @@
-# AIS-Catcher Rijnmond VTS sector overlay
+# AIS-Catcher Rijnmond VTS-sectoren · v17.1
 
-Overlay voor de AIS-Catcher kaart met de officiële Rijnmond VTS-sectoren en de bijbehorende VHF-kanalen.
+Plugin voor de officiële Rijnmond VTS-sectoren, met actuele getij- en windgegevens bij Hoek van Holland.
 
-![Rijnmond VTS sectoren - v14, layer 100% zichtbaar](Screenshot-v14-layer-100.png)
+![Rijnmond VTS-sectoren](Screenshot-v14-layer-100.png)
 
-## Huidige versie: v15
+## Wat zit erin
 
-De huidige stabiele versie is **v15** (`vts-sectoren-rws-v15.pjs`).
+- De officiële RWS-sectorpolygonen blijven lokaal in de plugin opgeslagen.
+- De legenda toont de gemeten waterstand en de astronomische getijvoorspelling.
+- Onder de grafiek staat de verwachte tijd van het eerstvolgende hoogwater.
+- De legenda toont ook actuele windsnelheid en windrichting van Hoek van Holland.
+- Een kleine lokale relay haalt de RWS-data op. Dit is nodig omdat de RWS-webservice de browseraanvraag niet met de vereiste CORS-headers toestaat.
 
-- De legenda begint ingeklapt en onthoudt open/dicht per browser en websiteadres, ook na verversen of opnieuw laden bij een ATIS-oproep.
-- De legenda behoudt de bestaande positie rechtsboven, naast de AIS-bediening.
-- Het hele legendapaneel heeft waterkleur `#adccff`, ingesteld op de gekozen lichtblauwe tint.
-- De compacte kleurvakjes gebruiken weer de oorspronkelijke, volle sectorkleuren van v14.
-- De paneelkleur is vast; deze past zich niet automatisch aan andere achtergrondkaarten of thema’s aan.
-- Zonder browseropslag blijft de legenda bruikbaar, maar kan de keuze niet over een volledige paginaverversing worden onthouden.
+De VTS-legenda begint ingeklapt en onthoudt de open/dicht-keuze per browser en websiteadres. Ze staat rechtsboven naast de AIS-bediening. De paneelkleur is lichtblauw (`#adccff`); de sectorkleuren blijven de gekozen volle kleuren. Zonder browseropslag blijft de legenda bruikbaar, maar wordt de open/dicht-keuze niet na een volledige paginaverversing bewaard.
 
-## Sectoren
+De sectorpolygonen zijn officiële Rijkswaterstaat-geometrie. De lijst is numeriek gesorteerd op VHF-kanaal: **3, 10, 60, 61, 62, 63, 65, 66, 80 en 81**. Oude Maas gebruikt paars (`#af85f2`); Hartelkanaal is opgenomen met de officiële RWS-polygon.
 
-De overlay gebruikt lokaal opgeslagen officiële Rijkswaterstaat `vts-deelsector_v`-polygonen. Daardoor is voor het tekenen van de sectoren geen live ArcGIS-verzoek nodig.
+De relay is beperkt tot de twee RWS-endpoints die deze plugin gebruikt, locatie Hoek van Holland en de benodigde waterstands- en windmetingen. Hij luistert standaard alleen op `127.0.0.1:8120`. De installer wijzigt geen firewall- of routerinstellingen.
 
-Overgenomen uit v14:
+## Installeren of bijwerken
 
-- **Sector Oude Maas · VHF62** heeft een beter zichtbare paarse kleur (`#af85f2`).
-- **Sector Hartelkanaal · VHF10** is toegevoegd op basis van de officiële RWS-polygon.
-- De kaart bevat een compacte **VTS-sectoren · VHF**-legenda.
-- De legenda is numeriek gesorteerd: **VHF3, VHF10, VHF60, VHF61, VHF62, VHF63, VHF65, VHF66, VHF80 en VHF81**.
-- Oude Maas en Hartelkanaal worden iets nadrukkelijker weergegeven zodat deze sectoren ook bij een lagere overlay-opacity goed herkenbaar blijven.
-
-## Installeren
-
-AIS-Catcher laadt alle `.pjs`-bestanden uit de ingestelde pluginmap. Gebruik daarom bij voorkeur één actief bestand voor deze overlay.
+Clone de repository of werk een bestaande clone bij. Voer daarna één installatiecommando uit:
 
 ```bash
-sudo mkdir -p /etc/AIS-catcher/plugins
-sudo curl -fsSL https://raw.githubusercontent.com/EyeVisionsNL/AIS-catcher-VTS-rijnmond-blok-layer/main/vts-sectoren-rws-v15.pjs -o /etc/AIS-catcher/plugins/vts-sectoren.pjs
-sudo chmod 644 /etc/AIS-catcher/plugins/vts-sectoren.pjs
-sudo systemctl restart ais-catcher.service
+git clone --branch main git@github.com:EyeVisionsNL/AIS-catcher-VTS-rijnmond-blok-layer.git
+cd AIS-catcher-VTS-rijnmond-blok-layer
+sudo ./install.sh
 ```
 
-Na het herladen van de kaart verschijnt de overlay:
+Voor een bestaande clone:
 
-- `Rijnmond VTS sectoren`
+```bash
+cd ~/AIS-catcher-VTS-rijnmond-blok-layer
+git pull --ff-only origin main
+sudo ./install.sh
+```
 
-De legenda rechts op de kaart toont per kleur de sectornaam en het bijbehorende VHF-kanaal.
+De installer bewaart de vorige plugin eenmalig als `/etc/AIS-catcher/plugins/vts-sectoren.pjs.pre-v17.1`, installeert de plugin en relay, schakelt de relayservice in en herstart AIS-Catcher.
 
 ## Controleren
 
-Controleer eerst of het juiste bestand is geïnstalleerd:
+Controleer of de relay actief is:
 
 ```bash
-head -1 /etc/AIS-catcher/plugins/vts-sectoren.pjs
+sudo systemctl status ais-catcher-rws-relay.service --no-pager
 ```
 
-De eerste regel moet `v15` noemen.
-
-Controleer daarna de AIS-Catcher logging:
+Controleer daarna de CORS-preflight van AIS-Catcher naar de lokale relay. De uitvoer hoort HTTP `204` te bevatten en de genoemde `Access-Control-Allow-*`-headers:
 
 ```bash
-sudo journalctl -u ais-catcher.service -n 80 --no-pager | grep -Ei 'plugin|vts|error'
+curl -i --max-time 5 -X OPTIONS \
+  'http://127.0.0.1:8120/ONLINEWAARNEMINGENSERVICES/OphalenLaatsteWaarnemingen' \
+  -H 'Origin: http://127.0.0.1:8119' \
+  -H 'Access-Control-Request-Method: POST' \
+  -H 'Access-Control-Request-Headers: content-type'
 ```
 
-En controleer welke plugins in de map staan:
+Vernieuw daarna de AIS-Catcher-pagina hard met `Ctrl+F5` en open de VTS-legenda. De getij- en windgegevens worden ververst wanneer de legenda openstaat.
+
+Relaylogs bekijken:
 
 ```bash
-find /etc/AIS-catcher/plugins -maxdepth 1 -type f -name '*.pjs' -print
-```
-
-## Bijwerken
-
-Een bestaande installatie bijwerken naar v15:
-
-```bash
-sudo curl -fsSL https://raw.githubusercontent.com/EyeVisionsNL/AIS-catcher-VTS-rijnmond-blok-layer/main/vts-sectoren-rws-v15.pjs -o /etc/AIS-catcher/plugins/vts-sectoren.pjs
-sudo chmod 644 /etc/AIS-catcher/plugins/vts-sectoren.pjs
-sudo systemctl restart ais-catcher.service
-```
-
-Ververs daarna de AIS-Catcher kaart in de browser. Gebruik eventueel een harde refresh zodat de aangepaste plugin direct zichtbaar is.
-
-## Terug naar v14
-
-Als tijdelijke fallback kan de vorige gepubliceerde versie worden teruggezet:
-
-```bash
-sudo curl -fsSL https://raw.githubusercontent.com/EyeVisionsNL/AIS-catcher-VTS-rijnmond-blok-layer/main/vts-sectoren-rws-v14.pjs -o /etc/AIS-catcher/plugins/vts-sectoren.pjs
-sudo chmod 644 /etc/AIS-catcher/plugins/vts-sectoren.pjs
-sudo systemctl restart ais-catcher.service
+sudo journalctl -u ais-catcher-rws-relay.service -n 40 --no-pager
 ```
 
 ## Verwijderen
 
+Voer vanuit de repositorymap uit:
+
 ```bash
-sudo rm -f /etc/AIS-catcher/plugins/vts-sectoren.pjs
-sudo systemctl restart ais-catcher.service
+sudo ./uninstall.sh
 ```
+
+De uninstallscript verwijdert de relayservice en herstelt de plugin die vóór v17.1 aanwezig was.
 
 ## VHF-sectoren
 
-De overlay bevat de Rijnmond-sectoren voor VHF **3, 10, 60, 61, 62, 63, 65, 66, 80 en 81**.
-
-## Databron
-
-De sectorgeometrie is afkomstig uit de officiële Rijkswaterstaat dataset:
-
-- `GDR/fis_vnds` — `vts-deelsector_v`, polygonlaag 67
-
-De geometrie staat lokaal in de plugin opgeslagen.
-
-Repository: `EyeVisionsNL/AIS-catcher-VTS-rijnmond-blok-layer`.
-
+De geometrie komt uit de officiële RWS-laag `vts-deelsector_v` (FeatureServer-laag 67) en blijft beschikbaar als RWS-data tijdelijk niet bereikbaar is.
