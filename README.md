@@ -2,7 +2,7 @@
 
 Plugin voor de officiële Rijnmond VTS-sectoren, met actuele getij- en windgegevens bij Hoek van Holland.
 
-![Rijnmond VTS-sectoren](Screenshot-v14-layer-100.png)
+![Rijnmond VTS-sectoren](images/vts-rijnmond-live.png)
 
 ## Wat zit erin
 
