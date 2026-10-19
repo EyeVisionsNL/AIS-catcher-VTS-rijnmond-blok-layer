@@ -79,3 +79,9 @@ The uninstall script removes the relay service and restores the plugin that was 
 ## VHF sector data
 
 The geometry comes from the official RWS `vts-deelsector_v` layer (FeatureServer layer 67). The sector polygons remain available if RWS data is temporarily unreachable.
+
+## License and attribution
+
+Copyright (C) 2026 EyeVisionsNL. The original software source code is licensed under GNU GPL-3.0-only. See [LICENSE](LICENSE).
+
+Rijkswaterstaat sector data, screenshots, and other third-party materials retain their own rights and terms. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
