@@ -82,6 +82,6 @@ The geometry comes from the official RWS `vts-deelsector_v` layer (FeatureServer
 
 ## License and attribution
 
-Copyright (C) 2026 EyeVisionsNL. The original software source code is licensed under GNU GPL-3.0-only. See [LICENSE](LICENSE).
+Copyright (C) 2026 EyeVisionsNL. The project logo, branding, and original project-created graphics are EyeVisionsNL assets. The original software source code is licensed under GNU GPL-3.0-only; see [LICENSE](LICENSE).
 
-Rijkswaterstaat sector data, screenshots, and other third-party materials retain their own rights and terms. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+Rijkswaterstaat sector data, live observations, and third-party software remain subject to their respective terms. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
