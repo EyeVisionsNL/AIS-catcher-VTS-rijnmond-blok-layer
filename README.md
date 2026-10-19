@@ -1,26 +1,28 @@
-# AIS-Catcher Rijnmond VTS-sectoren · v17.1
+# AIS-Catcher Rijnmond VTS Sectors · v17.1
 
-Plugin voor de officiële Rijnmond VTS-sectoren, met actuele getij- en windgegevens bij Hoek van Holland.
+Plugin for the official Rijnmond VTS sectors, with current tide and wind data for Hoek van Holland.
 
-![Rijnmond VTS-sectoren](images/vts-rijnmond-live.png)
+![Rijnmond VTS sectors](images/vts-rijnmond-live.png)
 
-## Wat zit erin
+## Features
 
-- De officiële RWS-sectorpolygonen blijven lokaal in de plugin opgeslagen.
-- De legenda toont de gemeten waterstand en de astronomische getijvoorspelling.
-- Onder de grafiek staat de verwachte tijd van het eerstvolgende hoogwater.
-- De legenda toont ook actuele windsnelheid en windrichting van Hoek van Holland.
-- Een kleine lokale relay haalt de RWS-data op. Dit is nodig omdat de RWS-webservice de browseraanvraag niet met de vereiste CORS-headers toestaat.
+- Official Rijkswaterstaat (RWS) sector polygons are stored locally in the plugin.
+- The legend shows the measured water level and the astronomical tide forecast.
+- The expected time of the next high tide appears below the chart.
+- The legend also shows the current wind speed and direction at Hoek van Holland.
+- A small local relay retrieves the RWS data. The relay is needed because the RWS web service does not provide the CORS headers required for browser requests.
 
-De VTS-legenda begint ingeklapt en onthoudt de open/dicht-keuze per browser en websiteadres. Ze staat rechtsboven naast de AIS-bediening. De paneelkleur is lichtblauw (`#adccff`); de sectorkleuren blijven de gekozen volle kleuren. Zonder browseropslag blijft de legenda bruikbaar, maar wordt de open/dicht-keuze niet na een volledige paginaverversing bewaard.
+The VTS legend starts collapsed and remembers its open or closed state for each browser and site address. It appears in the top-right corner, next to the AIS controls. The panel is light blue (`#adccff`), while the sector polygons retain their selected solid colors. If browser storage is unavailable, the legend still works, but its open or closed state is not remembered after a full page reload.
 
-De sectorpolygonen zijn officiële Rijkswaterstaat-geometrie. De lijst is numeriek gesorteerd op VHF-kanaal: **3, 10, 60, 61, 62, 63, 65, 66, 80 en 81**. Oude Maas gebruikt paars (`#af85f2`); Hartelkanaal is opgenomen met de officiële RWS-polygon.
+The sector polygons use official Rijkswaterstaat geometry and are sorted numerically by VHF channel: **3, 10, 60, 61, 62, 63, 65, 66, 80, and 81**. Oude Maas is purple (`#af85f2`), and Hartelkanaal uses the official RWS polygon.
 
-De relay is beperkt tot de twee RWS-endpoints die deze plugin gebruikt, locatie Hoek van Holland en de benodigde waterstands- en windmetingen. Hij luistert standaard alleen op `127.0.0.1:8120`. De installer wijzigt geen firewall- of routerinstellingen.
+The relay is restricted to the two RWS endpoints used by the plugin, the Hoek van Holland location, and the required water-level and wind observations. By default, it listens only on `127.0.0.1:8120`. The installer does not change firewall or router settings.
 
-## Installeren of bijwerken
+## Install or update
 
-Clone de repository of werk een bestaande clone bij. Voer daarna één installatiecommando uit:
+Clone the repository, or update an existing clone, then run the installer.
+
+For a new installation:
 
 ```bash
 git clone --branch main git@github.com:EyeVisionsNL/AIS-catcher-VTS-rijnmond-blok-layer.git
@@ -28,7 +30,7 @@ cd AIS-catcher-VTS-rijnmond-blok-layer
 sudo ./install.sh
 ```
 
-Voor een bestaande clone:
+For an existing clone:
 
 ```bash
 cd ~/AIS-catcher-VTS-rijnmond-blok-layer
@@ -36,17 +38,17 @@ git pull --ff-only origin main
 sudo ./install.sh
 ```
 
-De installer bewaart de vorige plugin eenmalig als `/etc/AIS-catcher/plugins/vts-sectoren.pjs.pre-v17.1`, installeert de plugin en relay, schakelt de relayservice in en herstart AIS-Catcher.
+If a plugin is already installed, the installer saves it once as `/etc/AIS-catcher/plugins/vts-sectoren.pjs.pre-v17.1`. It then installs the v17.1 plugin and relay, enables and starts the relay service, and restarts AIS-Catcher.
 
-## Controleren
+## Verify the installation
 
-Controleer of de relay actief is:
+Check that the relay service is running:
 
 ```bash
 sudo systemctl status ais-catcher-rws-relay.service --no-pager
 ```
 
-Controleer daarna de CORS-preflight van AIS-Catcher naar de lokale relay. De uitvoer hoort HTTP `204` te bevatten en de genoemde `Access-Control-Allow-*`-headers:
+Next, check the CORS preflight from AIS-Catcher to the local relay. The response should contain HTTP `204` and the required `Access-Control-Allow-*` headers:
 
 ```bash
 curl -i --max-time 5 -X OPTIONS \
@@ -56,24 +58,24 @@ curl -i --max-time 5 -X OPTIONS \
   -H 'Access-Control-Request-Headers: content-type'
 ```
 
-Vernieuw daarna de AIS-Catcher-pagina hard met `Ctrl+F5` en open de VTS-legenda. De getij- en windgegevens worden ververst wanneer de legenda openstaat.
+Then hard-refresh the AIS-Catcher page with `Ctrl+F5` and open the VTS legend. Tide and wind data refresh while the legend is open.
 
-Relaylogs bekijken:
+To view the relay logs:
 
 ```bash
 sudo journalctl -u ais-catcher-rws-relay.service -n 40 --no-pager
 ```
 
-## Verwijderen
+## Uninstall
 
-Voer vanuit de repositorymap uit:
+Run this command from the repository directory:
 
 ```bash
 sudo ./uninstall.sh
 ```
 
-De uninstallscript verwijdert de relayservice en herstelt de plugin die vóór v17.1 aanwezig was.
+The uninstall script removes the relay service and restores the plugin that was installed before v17.1. If no backup exists, it removes the installed plugin only when the file is still the v17.1 release.
 
-## VHF-sectoren
+## VHF sector data
 
-De geometrie komt uit de officiële RWS-laag `vts-deelsector_v` (FeatureServer-laag 67) en blijft beschikbaar als RWS-data tijdelijk niet bereikbaar is.
+The geometry comes from the official RWS `vts-deelsector_v` layer (FeatureServer layer 67). The sector polygons remain available if RWS data is temporarily unreachable.
